@@ -1,1 +1,1 @@
-# Plot.ly-JavaScript-Challenge
+# Plotly-JavaScript-Challenge
