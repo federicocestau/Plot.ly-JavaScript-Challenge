@@ -53,7 +53,7 @@ function BuildCharts(ID) {
       marker: {
         color: colors,
         size: size,
-      colorscale: "Earth"
+        colorscale: "Earth"
       }
     };
     var bubble_data = [trace1];
@@ -110,47 +110,83 @@ function buildGauge(ID) {
 
     var wfreq = metadata.wfreq;
 
-    var core = [
+    // create a level for the sample
+    var level = parseFloat(wfreq) * 20;
+
+    // Trig to calc meter point
+
+    var degrees = 180 - level,
+      radius = .5;
+    var radians = degrees * Math.PI / 180;
+    var x = radius * Math.cos(radians);
+    var y = radius * Math.sin(radians);
+
+    // Path: may have to change to create a better triangle
+    var mainPath = 'M -.0 -0.035 L .0 0.035 L ',
+      pathX = String(x),
+      space = ' ',
+      pathY = String(y),
+      pathEnd = ' Z';
+    var path = mainPath.concat(pathX, space, pathY, pathEnd);
+
+
+    var data = [
       {
-        type: "indicator",
-        mode: "gauge",
-        value: wfreq,
-        gauge: {
-          axis: { range: [null, 9] },
-          bgcolor: "white",
-          borderwidth: 2,
-          bordercolor: "gray",
-          rotation: 90,
-          text: ["8-9", "7-8", "6-7", "5-6", "4-5", "3-4", "2-3", "1-2", "0-1", ""],
-          textinfo: "text",
-          textposition: "inside",
-          marker: {
-            colors: ['rgba(0, 102, 0, .5)', 'rgba(0, 153, 0, .5)',
-              'rgba(0, 204, 0, .5)', 'rgba(51, 255, 51, .5)',
-              'rgba(102, 255, 102, .5)', 'rgba(140, 255, 140, .5)',
-              'rgba(170, 255, 170, .5)', 'rgba(204, 255, 204, .5)',
-              'rgba(229, 255, 229, .5)', 'rgba(229, 255, 255, 0)']
-          },
-          labels: ["8-9", "7-8", "6-7", "5-6", "4-5", "3-4", "2-3", "1-2", "0-1", ""],
-          hoverinfo: "label",
-          hole: 0.5,
-          type: "pie",
-          showlegend: true
-        }
-      }
-    ];
+        type: "scatter",
+        x: [0], y: [0],
+        marker: { size: 18, color: '850000' },
+        showlegend: false,
+        name: "Wash Frequency",
+        text: level,
+        hoverinfo: "text+name"
+      },
+
+      {
+        values: [50 / 9, 50 / 9, 50 / 9, 50 / 9, 50 / 9, 50 / 9, 50 / 9, 50 / 9, 50 / 9, 50],
+        rotation: 90,
+        text: ["8-9", "7-8", "6-7", "5-6", "4-5", "3-4", "2-3", "1-2", "0-1", ""],
+        textinfo: "text",
+        textposition: "inside",
+        marker: {
+          colors: ['rgba(0, 102, 0, .5)', 'rgba(0, 153, 0, .5)',
+            'rgba(0, 204, 0, .5)', 'rgba(51, 255, 51, .5)',
+            'rgba(102, 255, 102, .5)', 'rgba(140, 255, 140, .5)',
+            'rgba(170, 255, 170, .5)', 'rgba(204, 255, 204, .5)',
+            'rgba(229, 255, 229, .5)', 'rgba(229, 255, 255, 0)']
+        },
+        labels: ["8-9", "7-8", "6-7", "5-6", "4-5", "3-4", "2-3", "1-2", "0-1", ""],
+        hoverinfo: "label",
+        hole: 0.5,
+        type: "pie",
+        showlegend: false
+      }];
 
     var layout = {
-      width: 500,
-      height: 400,
-      margin: { t: 25, r: 25, l: 25, b: 25 },
-      font: { color: "darkblue", family: "Arial" }
+      shapes: [{
+        type: 'path',
+        path: path,
+        fillcolor: '850000',
+        line: {
+          color: '850000'
+        }
+      }],
+      title: "<b>Belly Button Washing Frequency</b> <br> Scrubs per Week",
+      autosize: true,
+      xaxis: {
+        zeroline: false,
+        showticklabels: false,
+        showgrid: false,
+        range: [-1, 1]
+      },
+      yaxis: {
+        zeroline: false,
+        showticklabels: false,
+        showgrid: false,
+        range: [-1, 1]
+    }
     };
 
-    Plotly.newPlot('gauge', core, layout);
+    Plotly.newPlot("gauge", data, layout);
   });
-
-}
-
-
+};
 
